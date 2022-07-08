@@ -86,21 +86,21 @@ resource "azurerm_application_gateway" "network" {
     subnet_id = azurerm_subnet.frontend.id
   }
 
-    dynamic "frontend_port" {
-    for_each = var.enable_ssl   ? [1] : []
+  dynamic "frontend_port" {
+    for_each = var.enable_ssl ? [1] : []
     content {
-        name = local.frontend_port_name
-        port = 443
+      name = local.frontend_port_name
+      port = 443
     }
-    }
+  }
 
-    dynamic "frontend_port" {
-    for_each = var.enable_ssl   ? [] : [1]
+  dynamic "frontend_port" {
+    for_each = var.enable_ssl ? [] : [1]
     content {
-        name = local.frontend_port_name
-        port = 80
+      name = local.frontend_port_name
+      port = 80
     }
-    }
+  }
 
   frontend_ip_configuration {
     name                 = local.frontend_ip_configuration_name
@@ -112,16 +112,16 @@ resource "azurerm_application_gateway" "network" {
     fqdns = [azurerm_container_group.containergroup_atlantis.ip_address]
   }
 
-    dynamic "ssl_certificate" {
-    for_each = var.enable_ssl    ? [1] : []
+  dynamic "ssl_certificate" {
+    for_each = var.enable_ssl ? [1] : []
     content {
-    name     =  local.ssl_certificate_name  
-    data     = filebase64("${path.root}/${var.ssl_pfx_file}")
-    password = var.ssl_pfx_file_password
+      name     = local.ssl_certificate_name
+      data     = filebase64("${path.root}/${var.ssl_pfx_file}")
+      password = var.ssl_pfx_file_password
     }
-   }
+  }
 
-    backend_http_settings {
+  backend_http_settings {
     name                  = local.http_setting_name
     cookie_based_affinity = "Disabled"
     path                  = "/"
@@ -132,27 +132,27 @@ resource "azurerm_application_gateway" "network" {
   }
 
 
- dynamic "http_listener" {
-    for_each = var.enable_ssl   ? [1] : []
+  dynamic "http_listener" {
+    for_each = var.enable_ssl ? [1] : []
     content {
-    name                           = local.listener_name
-    frontend_ip_configuration_name = local.frontend_ip_configuration_name
-    frontend_port_name             = local.frontend_port_name
-    protocol                       = "Https"
-    ssl_certificate_name  = local.ssl_certificate_name  
+      name                           = local.listener_name
+      frontend_ip_configuration_name = local.frontend_ip_configuration_name
+      frontend_port_name             = local.frontend_port_name
+      protocol                       = "Https"
+      ssl_certificate_name           = local.ssl_certificate_name
+    }
   }
- }
 
-   dynamic "http_listener" {
-    for_each = var.enable_ssl  ? [] : [1]
+  dynamic "http_listener" {
+    for_each = var.enable_ssl ? [] : [1]
     content {
-    name                           = local.listener_name
-    frontend_ip_configuration_name = local.frontend_ip_configuration_name
-    frontend_port_name             = local.frontend_port_name
-    protocol                       = "Http"
+      name                           = local.listener_name
+      frontend_ip_configuration_name = local.frontend_ip_configuration_name
+      frontend_port_name             = local.frontend_port_name
+      protocol                       = "Http"
+    }
   }
- }
-  
+
   request_routing_rule {
     name                       = local.request_routing_rule_name
     rule_type                  = "Basic"
@@ -229,7 +229,7 @@ resource "azurerm_container_group" "containergroup_atlantis" {
 
 
   dynamic "container" {
-    for_each = var.create_and_attach_storage   ? [] : [1]
+    for_each = var.create_and_attach_storage ? [] : [1]
     content {
       name = "atlantis"
       #image  = "ghcr.io/runatlantis/atlantis:latest"
@@ -260,7 +260,7 @@ resource "azurerm_container_group" "containergroup_atlantis" {
   }
 
   dynamic "container" {
-    for_each = var.create_and_attach_storage   ? [1] : []
+    for_each = var.create_and_attach_storage ? [1] : []
     content {
       name = "atlantis"
       #image  = "runatlantis/atlantis:latest"
@@ -291,7 +291,7 @@ resource "azurerm_container_group" "containergroup_atlantis" {
       }
 
       dynamic "volume" {
-        for_each = var.create_and_attach_storage   ? [1] : []
+        for_each = var.create_and_attach_storage ? [1] : []
         content {
           name                 = "atlantis"
           read_only            = false
@@ -344,7 +344,7 @@ resource "azuread_application" "atlantis" {
 resource "azuread_service_principal" "atlantis" {
   application_id               = azuread_application.atlantis.application_id
   app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id] 
+  owners                       = [data.azuread_client_config.current.object_id]
 }
 
 resource "azuread_service_principal_password" "atlantis" {

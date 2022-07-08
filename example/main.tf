@@ -9,7 +9,7 @@ module "atlantis" {
   atlanits_repo_whitelist    = "github.com/user_or_org/repo"
   az_subscription_id         = "000000-0000-0000-0000-0000000"
   az_tenant_id               = "000000-0000-0000-0000-0000000"
-  atlantis_whitelist_ips     = ["8.8.8.8/32","4.2.2.0/24"]
+  atlantis_whitelist_ips     = ["8.8.8.8/32", "4.2.2.0/24"]
   infracost_api_key          = "your_infacost_api_key"
   enable_ssl                 = true
   ssl_pfx_file               = "your_cert_file.pfx"
