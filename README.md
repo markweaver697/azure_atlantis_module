@@ -25,12 +25,19 @@ Source: https://www.baeldung.com/openssl-self-signed-cert
 
 * You will need openssl (use linux, macos, wsl). You can create one in powershell as well but I have not included that here.
 * Let's create a password-protected, 2048-bit RSA private key (domain.key) with the openssl command:
+
 `openssl genrsa -out domain.key 2048`
+
 * Let's create a CSR (domain.csr) from our existing private key:]
+
 `openssl req -key domain.key -new -out domain.csr`
+
 * Let's create a self-signed certificate (domain.crt) with our existing private key and CSR:
+
 `openssl x509 -signkey domain.key -in domain.csr -req -days 365 -out domain.crt`
+
 * We'll use the following command to take our private key and certificate, and then combine them into a PKCS12 file:
+
 `openssl pkcs12 -inkey domain.key -in domain.crt -export -out domain.pfx`
 
 ## Providers
