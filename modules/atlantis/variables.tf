@@ -8,7 +8,7 @@ variable "location" {
 variable "create_and_attach_storage" {
   type        = bool
   default     = true
-  description = "if you do not weant blob stoage created and mapped to the container change this to false"
+  description = "if you do not want blob stoage created and mapped to the container change this to false"
 }
 
 variable "subscription_name" {
