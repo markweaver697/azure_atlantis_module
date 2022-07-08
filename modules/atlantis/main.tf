@@ -1,5 +1,3 @@
-
-
 locals {
   subnet1                        = cidrsubnet(var.vnet_cidr, 1, 0)
   subnet2                        = cidrsubnet(var.vnet_cidr, 1, 1)
@@ -29,7 +27,6 @@ resource "azurerm_virtual_network" "atlantis" {
   location            = azurerm_resource_group.atlantis.location
   resource_group_name = azurerm_resource_group.atlantis.name
   address_space       = [var.vnet_cidr]
- 
 }
 
 resource "azurerm_subnet" "frontend" {
@@ -37,7 +34,6 @@ resource "azurerm_subnet" "frontend" {
   resource_group_name  = azurerm_resource_group.atlantis.name
   virtual_network_name = azurerm_virtual_network.atlantis.name
   address_prefixes     = [local.subnet1]
- 
 }
 
 
@@ -55,12 +51,10 @@ resource "azurerm_subnet" "backend" {
       name    = "Microsoft.ContainerInstance/containerGroups"
       actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
     }
-
   }
   lifecycle {
     ignore_changes = [delegation.0.service_delegation.0.actions]
   }
- 
 }
 
 #atlantis app_gateway config
@@ -71,7 +65,6 @@ resource "azurerm_public_ip" "atlantis" {
   allocation_method   = "Static"
   sku                 = "Standard"
   domain_name_label   = "${var.subscription_name}-atlantis"
- 
 }
 
 
@@ -86,7 +79,6 @@ resource "azurerm_application_gateway" "network" {
     name     = "WAF_v2"
     tier     = "WAF_v2"
     capacity = 1
-
   }
 
   gateway_ip_configuration {
@@ -126,9 +118,8 @@ resource "azurerm_application_gateway" "network" {
     name     =  local.ssl_certificate_name  
     data     = filebase64("${path.root}/${var.ssl_pfx_file}")
     password = var.ssl_pfx_file_password
-  }
-
     }
+   }
 
     backend_http_settings {
     name                  = local.http_setting_name
@@ -138,7 +129,6 @@ resource "azurerm_application_gateway" "network" {
     protocol              = "Http"
     request_timeout       = 60
     host_name             = azurerm_container_group.containergroup_atlantis.ip_address
-
   }
 
 
@@ -171,7 +161,6 @@ resource "azurerm_application_gateway" "network" {
     backend_http_settings_name = local.http_setting_name
     priority                   = 10
   }
- 
 }
 
 
@@ -194,7 +183,6 @@ resource "azurerm_web_application_firewall_policy" "atlantis" {
       negation_condition = true
       match_values       = concat(data.github_ip_ranges.waf.hooks, var.atlantis_whitelist_ips)
     }
-
     action = "Block"
   }
 
@@ -211,7 +199,6 @@ resource "azurerm_web_application_firewall_policy" "atlantis" {
       version = "3.1"
     }
   }
- 
 }
 
 
@@ -229,7 +216,6 @@ resource "azurerm_network_profile" "containergroup_profile" {
       subnet_id = azurerm_subnet.backend.id
     }
   }
- 
 }
 
 resource "azurerm_container_group" "containergroup_atlantis" {
@@ -315,10 +301,8 @@ resource "azurerm_container_group" "containergroup_atlantis" {
           storage_account_key  = azurerm_storage_account.atlantis_storage[0].primary_access_key
         }
       }
-
     }
   }
- 
 }
 
 #atlantis blob_storage 
@@ -330,7 +314,6 @@ resource "azurerm_storage_account" "atlantis_storage" {
   account_tier             = "Standard"
   account_replication_type = "LRS"
   min_tls_version          = "TLS1_2"
- 
 }
 
 ## this will be mapped to the container instance 
@@ -339,7 +322,6 @@ resource "azurerm_storage_share" "container_share" {
   name                 = "atlantis-data"
   storage_account_name = azurerm_storage_account.atlantis_storage[0].name
   quota                = 100
- 
 }
 
 ##this is for stroing terrafrom statefile configurations 
@@ -347,7 +329,6 @@ resource "azurerm_storage_container" "atlantis_container" {
   count                = var.create_and_attach_storage ? 1 : 0
   name                 = "atlantis-tf-files"
   storage_account_name = azurerm_storage_account.atlantis_storage[0].name
- 
 }
 
 #Atlantis IAM resources 
@@ -358,19 +339,12 @@ data "github_ip_ranges" "waf" {}
 resource "azuread_application" "atlantis" {
   display_name = "atlantis"
   owners       = [data.azuread_client_config.current.object_id]
- 
 }
 
 resource "azuread_service_principal" "atlantis" {
   application_id               = azuread_application.atlantis.application_id
   app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id]
-
-  feature_tags {
-    enterprise = true
-    gallery    = true
-  }
- 
+  owners                       = [data.azuread_client_config.current.object_id] 
 }
 
 resource "azuread_service_principal_password" "atlantis" {
