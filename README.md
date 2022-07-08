@@ -21,6 +21,8 @@ markweaver697@gmail.com
 * [PLEASE READ!] Optional feature to secure Atlantis UI with a basic username/password authentication.  This feature seems to be broken in the current atlanits images. it is set to default'false' at this time.  you can use variable 'input_atlantis_ui_basic_auth' set to true to enable
 
 ## Quick self signed certificate
+I have included these steps for those who are learning. Please note this will not be secure and should be used for educational purposes only. I suggest a proper SSL certificate for production. 
+
 Source: https://www.baeldung.com/openssl-self-signed-cert 
 
 * You will need openssl (use linux, macos, wsl). You can create one in powershell as well but I have not included that here.
