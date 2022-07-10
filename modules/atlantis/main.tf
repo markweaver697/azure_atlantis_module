@@ -16,7 +16,7 @@ locals {
 
 # Atlantis  Resource group
 resource "azurerm_resource_group" "atlantis" {
-  name     = "atlantis"
+  name     = "${var.subscription_name}-atlantis"
   location = var.location
 }
 
@@ -30,7 +30,7 @@ resource "azurerm_virtual_network" "atlantis" {
 }
 
 resource "azurerm_subnet" "frontend" {
-  name                 = "frontend"
+  name                 = "${var.subscription_name}-atlantis-frontend"
   resource_group_name  = azurerm_resource_group.atlantis.name
   virtual_network_name = azurerm_virtual_network.atlantis.name
   address_prefixes     = [local.subnet1]
@@ -38,7 +38,7 @@ resource "azurerm_subnet" "frontend" {
 
 
 resource "azurerm_subnet" "backend" {
-  name                                           = "backend"
+  name                                           = "${var.subscription_name}-atlantis-backend"
   resource_group_name                            = azurerm_resource_group.atlantis.name
   virtual_network_name                           = azurerm_virtual_network.atlantis.name
   address_prefixes                               = [local.subnet2]
@@ -59,7 +59,7 @@ resource "azurerm_subnet" "backend" {
 
 #atlantis app_gateway config
 resource "azurerm_public_ip" "atlantis" {
-  name                = "atlantis-pip"
+  name                = "${var.subscription_name}-atlantis-pip"
   resource_group_name = azurerm_resource_group.atlantis.name
   location            = azurerm_resource_group.atlantis.location
   allocation_method   = "Static"
@@ -69,7 +69,7 @@ resource "azurerm_public_ip" "atlantis" {
 
 
 resource "azurerm_application_gateway" "network" {
-  name                              = "atlantis-appgateway"
+  name                              = "${var.subscription_name}-atlantis-appgateway"
   resource_group_name               = azurerm_resource_group.atlantis.name
   location                          = azurerm_resource_group.atlantis.location
   firewall_policy_id                = azurerm_web_application_firewall_policy.atlantis.id
@@ -165,7 +165,7 @@ resource "azurerm_application_gateway" "network" {
 
 
 resource "azurerm_web_application_firewall_policy" "atlantis" {
-  name                = "atlantis-wafpolicy"
+  name                = "${var.subscription_name}-atlantis-wafpolicy"
   resource_group_name = azurerm_resource_group.atlantis.name
   location            = azurerm_resource_group.atlantis.location
 
@@ -204,7 +204,7 @@ resource "azurerm_web_application_firewall_policy" "atlantis" {
 
 #Atlantis container group config
 resource "azurerm_network_profile" "containergroup_profile" {
-  name                = "atlantis-acg-profile"
+  name                = "${var.subscription_name}-atlantis-acg-profile"
   location            = azurerm_resource_group.atlantis.location
   resource_group_name = azurerm_resource_group.atlantis.name
 
@@ -219,13 +219,13 @@ resource "azurerm_network_profile" "containergroup_profile" {
 }
 
 resource "azurerm_container_group" "containergroup_atlantis" {
-  name                = "atlantis"
+  name                = "${var.subscription_name}-atlantis"
   location            = azurerm_resource_group.atlantis.location
   resource_group_name = azurerm_resource_group.atlantis.name
   ip_address_type     = "Private"
   os_type             = "Linux"
   network_profile_id  = azurerm_network_profile.containergroup_profile.id
-  restart_policy      = "OnFailure"
+  restart_policy      = "Never"
 
 
   dynamic "container" {
@@ -262,7 +262,7 @@ resource "azurerm_container_group" "containergroup_atlantis" {
   dynamic "container" {
     for_each = var.create_and_attach_storage ? [1] : []
     content {
-      name = "atlantis"
+      name = "${var.subscription_name}-atlantis"
       #image  = "runatlantis/atlantis:latest"
       image  = "infracost/infracost-atlantis:latest"
       cpu    = "1.0"
@@ -290,20 +290,18 @@ resource "azurerm_container_group" "containergroup_atlantis" {
         ATLANTIS_REPO_CONFIG_JSON  = var.infracost_repos_json
       }
 
-      dynamic "volume" {
-        for_each = var.create_and_attach_storage ? [1] : []
-        content {
-          name                 = "atlantis"
-          read_only            = false
-          mount_path           = "/mnt/atlantis-data"
-          share_name           = azurerm_storage_share.container_share[0].name
-          storage_account_name = azurerm_storage_account.atlantis_storage[0].name
-          storage_account_key  = azurerm_storage_account.atlantis_storage[0].primary_access_key
-        }
+      volume {
+        name                 = "${var.subscription_name}-atlantis"
+        read_only            = false
+        mount_path           = "/mnt/atlantis-data"
+        share_name           = azurerm_storage_share.container_share[0].name
+        storage_account_name = azurerm_storage_account.atlantis_storage[0].name
+        storage_account_key  = azurerm_storage_account.atlantis_storage[0].primary_access_key
       }
     }
   }
 }
+
 
 #atlantis blob_storage 
 resource "azurerm_storage_account" "atlantis_storage" {
@@ -319,7 +317,7 @@ resource "azurerm_storage_account" "atlantis_storage" {
 ## this will be mapped to the container instance 
 resource "azurerm_storage_share" "container_share" {
   count                = var.create_and_attach_storage ? 1 : 0
-  name                 = "atlantis-data"
+  name                 = "${var.subscription_name}-atlantis-data"
   storage_account_name = azurerm_storage_account.atlantis_storage[0].name
   quota                = 100
 }
@@ -327,7 +325,7 @@ resource "azurerm_storage_share" "container_share" {
 ##this is for stroing terrafrom statefile configurations 
 resource "azurerm_storage_container" "atlantis_container" {
   count                = var.create_and_attach_storage ? 1 : 0
-  name                 = "atlantis-tf-files"
+  name                 = "${var.subscription_name}-atlantis-tf-files"
   storage_account_name = azurerm_storage_account.atlantis_storage[0].name
 }
 
@@ -337,7 +335,7 @@ data "azurerm_subscription" "current" {}
 data "github_ip_ranges" "waf" {}
 
 resource "azuread_application" "atlantis" {
-  display_name = "atlantis"
+  display_name = "${var.subscription_name}-atlantis"
   owners       = [data.azuread_client_config.current.object_id]
 }
 
