@@ -16,6 +16,7 @@ markweaver697@gmail.com\\n
 * Uses the Github provider to get a list of IP's where webhooks will be sent from Github. It then adds those to a firewall policy associated with the Web Application Firewall v2.\\n
 * Creates a Azure application and service principal with contributor access to be used with the Atlantis deployment\\n
 * Creates a Container instance with the Infracost and Atlantis Docker image.  You can download and edit the module and put the runatlantis/atlantis:latest image if you do not want infracost comments on your pull requests\\n
+* Atlantis repos_json is configured to run an infracost evaluation and a terraform fmt check on all pull requests.  you can add more workflow actions by adding them to the repos_json in infracost_repos_json variable. 
 * Create a Web Application Firewall with a public IP and firewall policy that whitelists any IP CIDRs from 'input_atlantis_whitelist_ip' variable and the collected Github public IP's that send webhooks\\n
 * Optional feature to create and attach a Azure blob storage account and map the storage to "/mnt/atlantis-data" on the container instance. This feature can be enabled by answering true to the 'input_mount_blob_storage_on_container' variable \\n
 * [PLEASE READ!] Optional feature to secure Atlantis UI with a basic username/password authentication.  This feature seems to be broken in the current atlantis images. it is set to default'false' at this time.  you can use variable 'input_atlantis_ui_basic_auth' set to true to enable\\\n
