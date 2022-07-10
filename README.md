@@ -17,7 +17,7 @@ markweaver697@gmail.com
 * Creates a Azure application and service principal with contributor access to be used with the Atlantis deployment
 * Creates a Container instance with the Infracost and Atlantis Docker image.  You can download and edit the module and put the runatlantis/atlantis:latest image if you do not want infracost comments on your pull requests
 * Create a Web Application Firewall with a public IP and firewall policy that whitelists any IP CIDRs from 'input_atlantis_whitelist_ip' variable and the collected Github public IP's that send webhooks
-* Optional feature to create and attach a Azure blob storage account and map the storage to "/mnt/atlantis-data" on the container instance. This feature can be enabled by answeringtrue to the 'input_mount_blob_storage_on_container' variable 
+* Optional feature to create and attach a Azure blob storage account and map the storage to "/mnt/atlantis-data" on the container instance. This feature can be enabled by answering true to the 'input_mount_blob_storage_on_container' variable 
 * [PLEASE READ!] Optional feature to secure Atlantis UI with a basic username/password authentication.  This feature seems to be broken in the current atlantis images. it is set to default 'false' at this time.  you can use variable 'input_atlantis_ui_basic_auth' set to true to enable
 
 ## Quick self signed certificate
