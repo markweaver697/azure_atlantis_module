@@ -14,13 +14,13 @@ variable "create_and_attach_storage" {
 variable "subscription_name" {
   type        = string
   default     = ""
-  description = "the name of the subscription"
+  description = "the name of the subscription. This will be used as a prefix for resource group and resource names."
 }
 
 variable "vnet_cidr" {
   type        = string
   default     = ""
-  description = "The CIDR of the vnet that will be used for the frontend and backend subnets. this cidr will be split into 2 subnets. it is suggested to use /23 cidr for the vnets and they will be split int0 two /24 subnets. you could use a smaller cidr like a /28 if you want"
+  description = "The CIDR of the vnet that will be used for the frontend and backend subnets. this cidr will be split in to 2 subnets. it is suggested to use /23 cidr for the vnets and they will be split int two /24 subnets. you could use a smaller cidr like a /28 if you want"
 }
 
 
@@ -44,7 +44,7 @@ variable "atlantis_gh_webhook_secret" {
   description = "The github webhook to use for the access to the github"
 }
 
-variable "atlanits_repo_whitelist" {
+variable "atlantis_repo_whitelist" {
   type        = string
   default     = ""
   sensitive   = true
@@ -66,7 +66,7 @@ variable "az_tenant_id" {
 variable "atlantis_whitelist_ips" {
   type        = list(string)
   default     = [""]
-  description = "We are protecting Atlantis with a WAFv2 App gateway. Github webhook IP's are being automatically added to the WAFv2 policy. Here you should include any public IP CIDR's you want to access the atlantis UI with . I.E. Home connection, Datacenters, offices, etc."
+  description = "We are protecting Atlantis with a WAFv2 App gateway. Git webhook IP's are being automatically added to the WAFv2 policy. Here you should include any public IP CIDR's you want to access the atlantis UI with . I.E. Home connection, Data centers, offices, etc."
 }
 
 ##  for SSL config not setup yet
@@ -154,6 +154,9 @@ variable "infracost_repos_json" {
           },
           {
             "run": "# Choose the commenting behavior, 'new' is a good default:\n#   new: Create a new cost estimate comment on every run of Atlantis for each project.\n#   update: Create a single comment and update it. The \"quietest\" option.\n#   hide-and-new: Minimize previous comments and create a new one.\n#   delete-and-new: Delete previous comments and create a new one.\n# You can use `tag` to customize the hidden markdown tag used to detect comments posted by Infracost. We pass in the project directory here\n# so that there are no conflicts across projects when posting to the pull request. This is especially important if you\n# use a comment behavior other than \"new\".\ninfracost comment github --repo $BASE_REPO_OWNER/$BASE_REPO_NAME \\\n                        --pull-request $PULL_NUM \\\n                        --path $INFRACOST_OUTPUT \\\n                        --github-token $GITHUB_TOKEN \\\n                        --tag $INFRACOST_COMMENT_TAG \\\n                        --behavior new\n"
+          },
+                    {
+            "run": "terraform fmt -check=true -diff=true -write=false"
           }
         ]
       }
