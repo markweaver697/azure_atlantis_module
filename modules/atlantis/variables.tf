@@ -8,7 +8,7 @@ variable "location" {
 variable "create_and_attach_storage" {
   type        = bool
   default     = true
-  description = "if you do not weant blob stoage created and mapped to the container change this to false"
+  description = "if you do not want blob storage created and mapped to the container change this to false"
 }
 
 variable "subscription_name" {
@@ -44,7 +44,7 @@ variable "atlantis_gh_webhook_secret" {
   description = "The github webhook to use for the access to the github"
 }
 
-variable "atlanits_repo_whitelist" {
+variable "atlantis_repo_whitelist" {
   type        = string
   default     = ""
   sensitive   = true
@@ -66,7 +66,7 @@ variable "az_tenant_id" {
 variable "atlantis_whitelist_ips" {
   type        = list(string)
   default     = [""]
-  description = "We are protecting Atlantis with a WAFv2 App gateway. Git webhook IP's are being automatically added to the WAFv2 policy. Here you should include any public IP CIDR's you want to access the atlantis UI with . I.E. Home connection, Datacenters, offices, etc."
+  description = "We are protecting Atlantis with a WAFv2 App gateway. Git webhook IP's are being automatically added to the WAFv2 policy. Here you should include any public IP CIDR's you want to access the atlantis UI with . I.E. Home connection, Data centers, offices, etc."
 }
 
 ##  for SSL config not setup yet
@@ -74,26 +74,26 @@ variable "atlantis_whitelist_ips" {
 variable "enable_ssl" {
   type        = bool
   default     = false
-  description = "if you answer true this will enable SSL config for atlantis and the WAFv2. you will need pfx, pem and crt files. you can create your own self signed for testing but besure to disable SSL verification on github webhook"
+  description = "if you answer true this will enable SSL config for atlantis and the WAFv2. you will need pfx, pem and crt files. you can create your own self signed for testing but be sure to disable SSL verification on github webhook"
 }
 
 variable "ssl_pfx_file" {
   type        = string
   default     = ""
-  description = "filename fdor the ssl pfx file.f.f put this in the same folder you are running the module from"
+  description = "filename for the ssl pfx file.f.f put this in the same folder you are running the module from"
 }
 
 variable "ssl_pfx_file_password" {
   type        = string
   default     = ""
   sensitive   = true
-  description = "filename fdor the ssl pfx file.f.f put this in the same folder you are running the module from"
+  description = "filename for the ssl pfx file.f.f put this in the same folder you are running the module from"
 }
 
 variable "atlantis_ui_basic_auth" {
   type        = bool
   default     = false
-  description = "if you answer true this will enable a user/pass defined in atlantis_ui_user and atlantis_ui_pass variables as a basic auth to the atlantis UI. However right now this feature seems to be broken on current docker images. don't enabnle this until it's fixed"
+  description = "if you answer true this will enable a user/pass defined in atlantis_ui_user and atlantis_ui_pass variables as a basic auth to the atlantis UI. However right now this feature seems to be broken on current docker images. don't enable this until it's fixed"
 
 }
 
@@ -165,6 +165,6 @@ variable "infracost_repos_json" {
 }
 CONFIG
   sensitive   = true
-  description = "this is the JSON config for infracost workflow. it needs to be added as a enviorment variable to the atlantis container. this is the standard template per project commit but you can customize it if you want to, directions and options are here : https://github.com/infracost/infracost-atlantis"
+  description = "this is the JSON config for infracost workflow. it needs to be added as a environment variable to the atlantis container. this is the standard template per project commit but you can customize it if you want to, directions and options are here : https://github.com/infracost/infracost-atlantis"
 }
 

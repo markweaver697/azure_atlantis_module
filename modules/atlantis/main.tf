@@ -245,7 +245,7 @@ resource "azurerm_container_group" "containergroup_atlantis" {
         ATLANTIS_GH_USER           = var.atlantis_gh_user
         ATLANTIS_GH_TOKEN          = var.atlantis_gh_token
         ATLANTIS_GH_WEBHOOK_SECRET = var.atlantis_gh_webhook_secret
-        ATLANTIS_REPO_WHITELIST    = var.atlanits_repo_whitelist
+        ATLANTIS_REPO_WHITELIST    = var.atlantis_repo_whitelist
         ARM_CLIENT_ID              = azuread_service_principal.atlantis.application_id
         ARM_TENANT_ID              = data.azurerm_subscription.current.tenant_id
         ARM_SUBSCRIPTION_ID        = data.azurerm_subscription.current.subscription_id
@@ -276,7 +276,7 @@ resource "azurerm_container_group" "containergroup_atlantis" {
         ATLANTIS_GH_USER           = var.atlantis_gh_user
         ATLANTIS_GH_TOKEN          = var.atlantis_gh_token
         ATLANTIS_GH_WEBHOOK_SECRET = var.atlantis_gh_webhook_secret
-        ATLANTIS_REPO_WHITELIST    = var.atlanits_repo_whitelist
+        ATLANTIS_REPO_WHITELIST    = var.atlantis_repo_whitelist
         ARM_CLIENT_ID              = azuread_service_principal.atlantis.application_id
         ARM_CLIENT_SECRET          = azuread_service_principal_password.atlantis.value
         ARM_TENANT_ID              = data.azurerm_subscription.current.tenant_id
