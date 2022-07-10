@@ -1,39 +1,38 @@
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
-* You will need an Azure account.\\n
-* You will need a github account.  You will have to setup an access token for Atlantis to use for access to github.  You will also need to setup a webhook secret for github to securely communicate with Atlantis.\\n
-* You can review the documentation here https://www.runatlantis.io/docs/access-credentials.html#create-an-atlantis-user-optional \\n
-* You will need an infracost API Key. You can install Infracost locally by downloading https://infracost.io/ and running the following command 'infracost register'  to get an API key.\\n
+* You will need an Azure account.
+* You will need a github account.  You will have to setup an access token for Atlantis to use for access to github.  You will also need to setup a webhook secret for github to securely communicate with Atlantis.
+* You can review the documentation here https://www.runatlantis.io/
+* You will need an infracost API Key. You can install Infracost locally by downloading https://infracost.io/ and running the following command 'infracost register'  to get an API key.
 
 ## Notes
-I started this as a module to learn terraform and Azure better.\\n
-if I am doing something wrong or if it can be done better please feel free to let me know.\\n
-markweaver697@gmail.com\\n
+I started this as a module to learn terraform and Azure better.
+if I am doing something wrong or if it can be done better please feel free to let me know.
+markweaver697@gmail.com
 
 ## What this module is doing
-* Creates a resource group for all atlantis resources \\n
-* Creates a vnet with  2 subnets and provisions the backend subnet for container instance delegation and a blob storage service endpoint. \\n
-* Uses the Github provider to get a list of IP's where webhooks will be sent from Github. It then adds those to a firewall policy associated with the Web Application Firewall v2.\\n
-* Creates a Azure application and service principal with contributor access to be used with the Atlantis deployment\\n
-* Creates a Container instance with the Infracost and Atlantis Docker image.  You can download and edit the module and put the runatlantis/atlantis:latest image if you do not want infracost comments on your pull requests\\n
+* Creates a resource group for all atlantis resources 
+* Creates a vnet with  2 subnets and provisions the backend subnet for container instance delegation and a blob storage service endpoint. 
+* Uses the Github provider to get a list of IP's where webhooks will be sent from Github. It then adds those to a firewall policy associated with the Web Application Firewall v2.
+* Creates a Azure application and service principal with contributor access to be used with the Atlantis deployment
+* Creates a Container instance with the Infracost and Atlantis Docker image.  You can download and edit the module and put the runatlantis/atlantis:latest image if you do not want infracost comments on your pull requests
 * Atlantis repos_json is configured to run an infracost evaluation and a terraform fmt check on all pull requests.  you can add more workflow actions by adding them to the repos_json in infracost_repos_json variable. 
-* Create a Web Application Firewall with a public IP and firewall policy that whitelists any IP CIDRs from 'input_atlantis_whitelist_ip' variable and the collected Github public IP's that send webhooks\\n
-* Optional feature to create and attach a Azure blob storage account and map the storage to "/mnt/atlantis-data" on the container instance. This feature can be enabled by answering true to the 'input_mount_blob_storage_on_container' variable \\n
-* [PLEASE READ!] Optional feature to secure Atlantis UI with a basic username/password authentication.  This feature seems to be broken in the current atlantis images. it is set to default'false' at this time.  you can use variable 'input_atlantis_ui_basic_auth' set to true to enable\\\n
-
+* Create a Web Application Firewall with a public IP and firewall policy that whitelists any IP CIDRs from 'input_atlantis_whitelist_ip' variable and the collected Github public IP's that send webhooks
+* Optional feature to create and attach a Azure blob storage account and map the storage to "/mnt/atlantis-data" on the container instance. This feature can be enabled by answering true to the 'input_mount_blob_storage_on_container' variable 
+* [PLEASE READ!] Optional feature to secure Atlantis UI with a basic username/password authentication.  This feature seems to be broken in the current atlantis images. it is set to default'false' at this time.  you can use variable 'input_atlantis_ui_basic_auth' set to true to enable
 
 ## Quick self signed certificate
 Source: https://www.baeldung.com/openssl-self-signed-cert 
 
-* You will need openssl (use linux, macos, wsl). You can create one in powershell as well but I have not included that here.\\n
-* Let's create a password-protected, 2048-bit RSA private key (domain.key) with the openssl command:\\n
-`openssl genrsa -out domain.key 2048`\\n
-* Let's create a CSR (domain.csr) from our existing private key:]\\n
-`openssl req -key domain.key -new -out domain.csr`\\n
-* Let's create a self-signed certificate (domain.crt) with our existing private key and CSR:\\n
-`openssl x509 -signkey domain.key -in domain.csr -req -days 365 -out domain.crt`\\n
-* We'll use the following command to take our private key and certificate, and then combine them into a PKCS12 file:\\n
-`openssl pkcs12 -inkey domain.key -in domain.crt -export -out domain.pfx`\\n
+* You will need openssl (use linux, macos, wsl). You can create one in powershell as well but I have not included that here.
+* Let's create a password-protected, 2048-bit RSA private key (domain.key) with the openssl command:
+`openssl genrsa -out domain.key 2048`
+* Let's create a CSR (domain.csr) from our existing private key:]
+`openssl req -key domain.key -new -out domain.csr`
+* Let's create a self-signed certificate (domain.crt) with our existing private key and CSR:
+`openssl x509 -signkey domain.key -in domain.csr -req -days 365 -out domain.crt`
+* We'll use the following command to take our private key and certificate, and then combine them into a PKCS12 file:
+`openssl pkcs12 -inkey domain.key -in domain.crt -export -out domain.pfx`
 
 ## Providers
 
